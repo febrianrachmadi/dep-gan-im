@@ -1,0 +1,1 @@
+This is where trained models of DEP-GAN (i.e., generator and critics) are stored.

@@ -8,18 +8,17 @@
 import os
 os.environ['KERAS_BACKEND']='tensorflow'
 os.environ["CUDA_VISIBLE_DEVICES"]="2"
-filename_save = "depgan_twoCritics_im_flair_noSL_progression_regression_Y2Loss_DEMLoss_plusZlayers_RLD441_08022019"
+filename_save = "depgan_twoCritics_im_flair_noSL_evolution_RLD441_08022019"
 
 # modifed from https://github.com/martinarjovsky/WassersteinGAN 
 
 # In[2]:
 
-
 import keras.backend as K
 # K.set_image_data_format('channels_first')
 from keras.models import Sequential, Model
-from keras.layers import Conv2D, ZeroPadding2D, BatchNormalization, Input, Dropout, Reshape
-from keras.layers import UpSampling2D, MaxPooling2D, AveragePooling2D, Dense, Lambda
+from keras.layers import Conv2D, ZeroPadding2D, BatchNormalization, Input, Dropout, Lambda
+from keras.layers import UpSampling2D, MaxPooling2D, AveragePooling2D, Dense, Conv1D
 from keras.layers import Conv2DTranspose, Reshape, Activation, Cropping2D, Flatten
 from keras.layers.merge import concatenate, multiply, add
 from keras.layers.advanced_activations import LeakyReLU
@@ -243,11 +242,42 @@ logger.log_graph(sess)
 
 # In[4]:
 
+def dense_bn(units=32, name_to_concat='', input_tensor=None):
+    tensor = Dense(units, kernel_initializer='he_normal', name=str('dense_'+name_to_concat))(input_tensor)
+    tensor = BatchNormalization(name=str('dense_bn_'+name_to_concat))(tensor)
+
+    return tensor
+
+def dense_bn_relu(units=32, padding='same', name_to_concat='', input_tensor=None):
+    tensor = Dense(units, kernel_initializer='he_normal', name=str('dense_'+name_to_concat))(input_tensor)
+    tensor = BatchNormalization(name=str('dense_bn_'+name_to_concat))(tensor)
+    tensor = Activation('relu', name=str('dense_relu_'+name_to_concat))(tensor)
+
+    return tensor
+
+def conv1d_bn(filter_size=3, filter_number=32, padding='same', name_to_concat='', input_tensor=None):
+    tensor = Conv1D(filter_number, filter_size, padding=padding, name=str('conv1d_'+name_to_concat))(input_tensor)
+    tensor = BatchNormalization(name=str('bn_'+name_to_concat))(tensor)
+
+    return tensor
+
+def conv1d_bn_relu(filter_size=3, filter_number=32, padding='same', name_to_concat='', input_tensor=None):
+    tensor = Conv1D(filter_number, filter_size, padding=padding, name=str('conv1d_'+name_to_concat))(input_tensor)
+    tensor = BatchNormalization(name=str('bn_'+name_to_concat))(tensor)
+    tensor = Activation('relu', name=str('relu_'+name_to_concat))(tensor)
+
+    return tensor
 
 def conv2d_bn_relu(filter_size=3, filter_number=32, padding='same', name_to_concat='', input_tensor=None):
     tensor = Conv2D(filter_number, (filter_size, filter_size), padding=padding, name=str('conv2d_'+name_to_concat))(input_tensor)
     tensor = BatchNormalization(name=str('bn_'+name_to_concat))(tensor)
     tensor = Activation('relu', name=str('relu_'+name_to_concat))(tensor)
+
+    return tensor
+
+def conv2d_bn(filter_size=3, filter_number=32, padding='same', name_to_concat='', input_tensor=None):
+    tensor = Conv2D(filter_number, (filter_size, filter_size), padding=padding, name=str('conv2d_'+name_to_concat))(input_tensor)
+    tensor = BatchNormalization(name=str('bn_'+name_to_concat))(tensor)
 
     return tensor
 
@@ -303,51 +333,146 @@ def Dis_C2D_FCN1(input_shape):
 # In[6]:
 
 
-def Gen_UNet2D(input_shape, noiseZ_shape=(32,32,1), first_fm=32, nc_out=1):
+def Gen_UNet2D(input_shape, noiseZ_shape=(32, 1), first_fm=32, nc_out=1):
     n_ch_0 = first_fm
     inputs = Input(input_shape, name='input_gen_chn_0')
-    noiseZ_shape_batch = (noiseZ_shape[0], noiseZ_shape[1], noiseZ_shape[2]) # v4-plusZ
-    inputNoiseZ = Input(noiseZ_shape_batch, name='input_gen_noiseZ_0') # v4-plusZ
+    noiseZ_shape_batch = (noiseZ_shape[0], noiseZ_shape[1]) # v4-plusZ
+    inputNoiseZ = Input(noiseZ_shape_batch, name='input_gen_noiseZ_0') # v4-plusZ    
 
-    # Noise layers
-    noise_1 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*2, name_to_concat='noise_1', input_tensor=inputNoiseZ)
-    noise_2 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*4, name_to_concat='noise_2', input_tensor=noise_1)
-    # noise_2 = Dropout(0.5, name='do_gen_0')(noise_2)
+    # Noise layers - Firsts
+    noise_1_add_f = dense_bn_relu(units=n_ch_0, name_to_concat='noise_1_add_f0', input_tensor=inputNoiseZ)
+    noise_1_add_f = dense_bn_relu(units=n_ch_0, name_to_concat='noise_1_add_f1', input_tensor=noise_1_add_f)
+    noise_1_add_f = Flatten()(noise_1_add_f)
+
+    # Noise layers - Addition+++
+    noise_2_add_m3 = dense_bn(units=n_ch_0*3, name_to_concat='noise_2_add_m3', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication+++
+    noise_2_mul_m3 = dense_bn(units=n_ch_0*3, name_to_concat='noise_2_mul_m3', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition++
+    noise_2_add_m2 = dense_bn(units=n_ch_0*2, name_to_concat='noise_2_add_m2', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication++
+    noise_2_mul_m2 = dense_bn(units=n_ch_0*2, name_to_concat='noise_2_mul_m2', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition+
+    noise_2_add_m1 = dense_bn(units=n_ch_0*1, name_to_concat='noise_2_add_m1', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication+
+    noise_2_mul_m1 = dense_bn(units=n_ch_0*1, name_to_concat='noise_2_mul_m1', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition
+    noise_2_add = dense_bn(units=n_ch_0*4, name_to_concat='noise_2_add', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication
+    noise_2_mul = dense_bn(units=n_ch_0*4, name_to_concat='noise_2_mul', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition+++
+    noise_2_add_p3 = dense_bn(units=n_ch_0*3, name_to_concat='noise_2_add_p3', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication+++
+    noise_2_mul_p3 = dense_bn(units=n_ch_0*3, name_to_concat='noise_2_mul_p3', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition++
+    noise_2_add_p2 = dense_bn(units=n_ch_0*2, name_to_concat='noise_2_add_p2', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication++
+    noise_2_mul_p2 = dense_bn(units=n_ch_0*2, name_to_concat='noise_2_mul_p2', input_tensor=noise_1_add_f)
+
+    # Noise layers - Addition+
+    noise_2_add_p1 = dense_bn(units=n_ch_0*1, name_to_concat='noise_2_add_p1', input_tensor=noise_1_add_f)
+    # Noise layers - Multiplication+
+    noise_2_mul_p1 = dense_bn(units=n_ch_0*1, name_to_concat='noise_2_mul_p1', input_tensor=noise_1_add_f)
     
     # Encoder
     conv_0 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0, name_to_concat='gen_0', input_tensor=inputs)
+    conv_0 = Dropout(0.25, name='do_gen_a3')(conv_0)
+    # M2 - Noise
+    conv_0_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0, name_to_concat='gen_noise_m1', input_tensor=conv_0)
+    conv_0_noise = Dropout(0.25, name='do_gen_b3')(conv_0_noise)
+    conv_0_noise = multiply([conv_0_noise, noise_2_mul_m1], name='mul_noiseZ_m1') # v4-plusZ
+    conv_0_noise = add([conv_0_noise, noise_2_add_m1], name='add_noiseZ_m1') # v4-plusZ
+    conv_0_noise = Activation('relu', name=str('relu_noise_m1'))(conv_0_noise)
+    # M2 - Noise - Addition
+    conv_0 = add([conv_0_noise, conv_0], name='add_noiseZres_m1') # v4-plusZ
     conv_1 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0, name_to_concat='gen_1', input_tensor=conv_0)
     pool_0 = MaxPooling2D(pool_size=(2, 2), name='maxpool2d_gen_0')(conv_1)
 
     conv_2 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_2', input_tensor=pool_0)
+    conv_2 = Dropout(0.25, name='do_gen_a2')(conv_2)
+    # M2 - Noise
+    conv_2_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_noise_m2', input_tensor=conv_2)
+    conv_2_noise = Dropout(0.25, name='do_gen_b2')(conv_2_noise)
+    conv_2_noise = multiply([conv_2_noise, noise_2_mul_m2], name='mul_noiseZ_m2') # v4-plusZ
+    conv_2_noise = add([conv_2_noise, noise_2_add_m2], name='add_noiseZ_m2') # v4-plusZ
+    conv_2_noise = Activation('relu', name=str('relu_noise_m2'))(conv_2_noise)
+    # M2 - Noise - Addition
+    conv_2 = add([conv_2_noise, conv_2], name='add_noiseZres_m2') # v4-plusZ
     conv_3 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_3', input_tensor=conv_2)
     pool_1 = MaxPooling2D(pool_size=(2, 2), name='maxpool2d_gen_1')(conv_3)
 
     conv_4 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_4', input_tensor=pool_1)
+    conv_4 = Dropout(0.25, name='do_gen_a1')(conv_4)
+    # M3 - Noise
+    conv_4_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_noise_m3', input_tensor=conv_4)
+    conv_4_noise = Dropout(0.25, name='do_gen_b1')(conv_4_noise)
+    conv_4_noise = multiply([conv_4_noise, noise_2_mul_m3], name='mul_noiseZ_m3') # v4-plusZ
+    conv_4_noise = add([conv_4_noise, noise_2_add_m3], name='add_noiseZ_m3') # v4-plusZ
+    conv_4_noise = Activation('relu', name=str('relu_noise_m3'))(conv_4_noise)
+    # M3 - Noise - Addition
+    conv_4 = add([conv_4_noise, conv_4], name='add_noiseZres_m3') # v4-plusZ
     conv_5 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_5', input_tensor=conv_4)
     pool_2 = MaxPooling2D(pool_size=(2, 2), name='maxpool2d_gen_2')(conv_5)
     
     # Bottleneck
     conv_6 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*4, name_to_concat='gen_8', input_tensor=pool_2)
-    conv_6 = add([conv_6, noise_2], name='add_noiseZ_0') # v4-plusZ
-    # conv_6 = Dropout(0.25, name='do_gen_0')(conv_6)
+    conv_6 = Dropout(0.25, name='do_gen_0a')(conv_6)
+    # Bottleneck - Noise
+    conv_6_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*4, name_to_concat='gen_noise_p4', input_tensor=conv_6)
+    conv_6_noise = Dropout(0.25, name='do_gen_0b')(conv_6_noise)
+    conv_6_noise = multiply([conv_6_noise, noise_2_mul], name='mul_noiseZ_p4') # v4-plusZ
+    conv_6_noise = add([conv_6_noise, noise_2_add], name='add_noiseZ_p4') # v4-plusZ
+    conv_6_noise = Activation('relu', name=str('relu_noise_p4'))(conv_6_noise)
+    # Bottleneck - Noise - Addition
+    conv_6 = add([conv_6_noise, conv_6], name='add_noiseZres_p4') # v4-plusZ
     conv_7 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*4, name_to_concat='gen_9', input_tensor=conv_6)
     pool_3 = deconv2d_bn_relu(filter_size=2, filter_number=n_ch_0*4, name_to_concat='de_gen_9', input_tensor=conv_7)
     pool_3 = concatenate([pool_3, conv_5], axis=-1, name='concat_gen_0')
 
     # Decoder
     conv_10 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_10', input_tensor=pool_3)
-    conv_10 = Dropout(0.25, name='do_gen_1')(conv_10)
+    conv_10 = Dropout(0.25, name='do_gen_1a')(conv_10)
+    # P3 - Noise
+    conv_10_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_noise_p3', input_tensor=conv_10)
+    conv_10_noise = Dropout(0.25, name='do_gen_1b')(conv_10_noise)
+    conv_10_noise = multiply([conv_10_noise, noise_2_mul_p3], name='mul_noiseZ_p3') # v4-plusZ
+    conv_10_noise = add([conv_10_noise, noise_2_add_p3], name='add_noiseZ_p3') # v4-plusZ
+    conv_10_noise = Activation('relu', name=str('relu_noise_p3'))(conv_10_noise)
+    # P3 - Noise - Addition
+    conv_10 = add([conv_10_noise, conv_10], name='add_noiseZres_p3') # v4-plusZ
     conv_11 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*3, name_to_concat='gen_11', input_tensor=conv_10)
     pool_5 = deconv2d_bn_relu(filter_size=2, filter_number=n_ch_0*3, name_to_concat='de_gen_11', input_tensor=conv_11)
     pool_5 = concatenate([pool_5, conv_3], axis=-1, name='concat_gen_1')
 
     conv_14 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_14', input_tensor=pool_5)
+    conv_14 = Dropout(0.25, name='do_gen_2a')(conv_14)
+    # P2 - Noise
+    conv_14_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_noise_p2', input_tensor=conv_14)
+    conv_14_noise = Dropout(0.25, name='do_gen_2b')(conv_14_noise)
+    conv_14_noise = multiply([conv_14_noise, noise_2_mul_p2], name='mul_noiseZ_p2') # v4-plusZ
+    conv_14_noise = add([conv_14_noise, noise_2_add_p2], name='add_noiseZ_p2') # v4-plusZ
+    conv_14_noise = Activation('relu', name=str('relu_noise_p2'))(conv_14_noise)
+    # P2 - Noise - Addition
+    conv_14 = add([conv_14_noise, conv_14], name='add_noiseZres_p2') # v4-plusZ
     conv_15 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0*2, name_to_concat='gen_15', input_tensor=conv_14)
     pool_7 = deconv2d_bn_relu(filter_size=2, filter_number=n_ch_0*2, name_to_concat='de_gen_15', input_tensor=conv_15)
     pool_7 = concatenate([pool_7, conv_1], axis=-1, name='concat_gen_3')
 
     conv_16 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0, name_to_concat='gen_16', input_tensor=pool_7)
+    conv_16 = Dropout(0.25, name='do_gen_3a')(conv_16)
+    # P2 - Noise
+    conv_16_noise = conv2d_bn(filter_size=3, filter_number=n_ch_0*1, name_to_concat='gen_noise_p1', input_tensor=conv_16)
+    conv_16_noise = Dropout(0.25, name='do_gen_3b')(conv_16_noise)
+    conv_16_noise = multiply([conv_16_noise, noise_2_mul_p1], name='mul_noiseZ_p1') # v4-plusZ
+    conv_16_noise = add([conv_16_noise, noise_2_add_p1], name='add_noiseZ_p1') # v4-plusZ
+    conv_16_noise = Activation('relu', name=str('relu_noise_p1'))(conv_16_noise)
+    # P2 - Noise - Addition
+    conv_16 = add([conv_16_noise, conv_16], name='add_noiseZres_p1') # v4-plusZ
     conv_17 = conv2d_bn_relu(filter_size=3, filter_number=n_ch_0, name_to_concat='gen_17', input_tensor=conv_16)
 
     # Segmentation Layer
@@ -630,30 +755,6 @@ print("flair_2tp_test - max: " + str(np.max(flair_2tp_test)) + ", min: " + str(n
 
 print("flair_1tp_val - max: " + str(np.max(flair_1tp_val)) + ", min: " + str(np.min(flair_1tp_val)))
 print("flair_2tp_val - max: " + str(np.max(flair_2tp_val)) + ", min: " + str(np.min(flair_2tp_val)))
-
-
-# In[19]:
-
-
-import matplotlib.pyplot as plt
-def plotDataX(data, rows, save=False, out_dir="./", out_name="test"):
-    num_data, x_s, y_s = data.shape
-    cols = int(np.ceil(num_data / rows))
-    fig=plt.figure(figsize=(9,9))
-    plt.subplots_adjust(top = 0.99, bottom = 0.01, right = 0.99, left = 0.01, 
-            hspace = 0.1, wspace = 0.1)
-    i = 0
-    for r in range(rows):
-        for c in range(cols):
-            fig.add_subplot(rows, cols, i+1)
-            plt.imshow(data[i,:,:])
-            plt.axis('off')
-            i += 1
-    if save:
-        outfile = os.path.join(out_dir, '{}.png'.format(out_name))   
-        plt.savefig(outfile)
-    plt.show()
-    plt.close()
 
 
 indices = np.array(range(flair_1tp_train.shape[0]))
