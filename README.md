@@ -1,7 +1,7 @@
 # Disease Evolution Predictor GAN (DEP-GAN) using Irregulairty Map (IM)
 This is provisional code of DEP-GAN using IM. All codes will be updated regularly. It is expected to publish the final version of the code before MICCAI 2019.
 
-Explanation of DEP-GAN can be read in our the pre-print version of our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[PDF]](https://doi.org/10.1101/662692).
+Quick explanation of DEP-GAN can be found in "About DEP-GAN" section. Whereas, full explanation of DEP-GAN can be read in our the pre-print version of our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[PDF]](https://doi.org/10.1101/662692).
 
 This code/publication is part of [our research projects](https://febrianrachmadi.github.io/projects/):
  - Disease Evolution Predictor Deep Neural Networks
@@ -24,7 +24,7 @@ If you find this code is useful, please cite the publication below.
  - [Taku Komura](http://homepages.inf.ed.ac.uk/tkomura/) - Supervisor in machine learning field (School of Informatics, University of Edinburgh)
  - Maria Valdés Hernández, Stephen Makin, Prof. Joanna M. Wardlaw - Supervisors in medical and clinical fields (Medical School, University of Edinburgh)
  
-## Introduction to DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1101/662692))
+## About DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1101/662692))
 
 White Matter Hyperintensities (WMH) are neuroradiological features in T2-weighted and fluid attenuated inversion recovery  (T2-FLAIR) brain Magnetic Resonance Images (MRI) that have been associated with stroke and dementia progression [13]. A  previous study has shown that the volume of WMH on a patient may decrease (regress), stay the same, or increase (progress) over a period of time [2]. In this study, we refer to these changes as "evolution of WMH".
 
@@ -37,7 +37,7 @@ Figure 1: Comparison between irregularity map, probability map (produced by Deep
 
 Evolution of WMH at two time points can be obtained by subtracting the baseline IM from the follow-up IM. We call the resulted image “Disease Evolution Map” (DEM) where its values range from -1 to 1. DEM’s values represent the magnitude of the longitudinal change, where negative values mean regression and positive values mean progression. As seen in Fig. 2, DEM calculated from IM represents WMH evolution better than the one calculated from normalised T2-FLAIR MRI. Note how both regression and progression (i.e. dark blue and bright yellow pixels in the figure) are well represented on the DEM from IM at voxel level precision. T2-FLAIR MRI is not ideal to generate DEM as their voxel values are rather a qualitative representation of the tissue’s spin-spin relaxation time as it decays towards its equilibrium value. Whereas, IM is a quantitative result of assessing how different each voxel is with respect to the ones that make most of the brain tissue voxels (i.e. in T2-FLAIR MRI in this case) [7].
 
-![alt text](images/disease-effect-map.png "Disease Evolution Map (DEM)")
+![alt text](images/diseases-effect-map.png "Disease Evolution Map (DEM)")
 Figure 2: Normalised T2-FLAIR (top) and corresponding irregularity maps (IM) (bottom) produced by using LOTS-IM [7]. “Disease Evolution Map” (DEM) (right) is produced by subtracting baseline images (middle) from follow-up images (left). In DEM, bright yellow pixels represent positive values (i.e., pro-gression) while dark blue pixels represent negative values (i.e., regression).
 
 We propose a GAN model for predicting WMH evolution namely disease evolution predictor GAN (DEP-GAN). DEP-GAN consists of a generator loosely based on U-Net [9] and two convolutional network critics, where baseline images are feed-forwarded to the  generator and fake/real images of follow-up and DEM are feedforwarded to two different critics (see Fig. 3 and Fig. 4). Results example of the resulted DEM can be seen in Fig. 5. Please, refer to [our MICCAI 2019 paper](https://doi.org/10.1101/662692) for full explanation of DEP-GAN model.
