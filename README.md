@@ -1,13 +1,16 @@
-# Disease Evolution Predictor GAN (DEP-GAN) using Irregulairty Map (IM)
-This is provisional code of DEP-GAN using IM. All codes will be updated regularly. It is expected to publish the final version of the code before MICCAI 2019.
+# Disease Evolution Predictor GAN (DEP-GAN) and U-ResNet (DEP-UResNet)
+This is provisional code of DEP-GAN and DEP-UResNet. All codes will be updated regularly. It is expected to publish the final version of the code before March 2020.
 
-Quick explanation of DEP-GAN can be found in "About DEP-GAN" section. Whereas, full explanation of DEP-GAN can be read in our the pre-print version of our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[PDF]](https://doi.org/10.1101/662692).
+Quick explanation of DEP-GAN can be found in "About DEP-GAN" section. Whereas, full explanation of DEP-GAN can be read in:
+ - our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692), or
+ - manuscript titled **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks** [[pre-print]](https://doi.org/10.1101/738641).
 
 This code/publication is part of [our research projects](https://febrianrachmadi.github.io/projects/):
  - Disease Evolution Predictor Deep Neural Networks
  - Characterisation of WMH in Brain MRI using Irregularity Map
 
 ## News/Update
+ - 07/01/2020: Added the final code of DEP-GAN and its example of trained weights.
  - 13/06/2019: Example of setting files are now online!
  - 12/06/2019: Provisional codes of DEP-GAN are now online!
  
@@ -17,14 +20,15 @@ This code/publication is part of [our research projects](https://febrianrachmadi
  
 ## Citation
 If you find this code is useful, please cite the publication below.
- - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map**. To appear in MICCAI 2019. pre-print: [10.1101/662692](https://doi.org/10.1101/662692)
+ - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map**. In: Shen D. et al. (eds) _Medical Image Computing and Computer Assisted Intervention – MICCAI 2019_. MICCAI 2019. Lecture Notes in Computer Science, vol 11766. Springer, Cham. [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692)
+ - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks**. bioRxiv, 738641. pre-print doi: doi.org/10.1101/738641
 
 ## Authors
  - [Febrian Rachmadi](https://febrianrachmadi.github.io/) - Main author of the DEP-GAN (idea and codes)
  - [Taku Komura](http://homepages.inf.ed.ac.uk/tkomura/) - Supervisor in machine learning field (School of Informatics, University of Edinburgh)
  - Maria Valdés Hernández, Stephen Makin, Prof. Joanna M. Wardlaw - Supervisors in medical and clinical fields (Medical School, University of Edinburgh)
  
-## About DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1101/662692))
+## About DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1007/978-3-030-32248-9_17))
 
 White Matter Hyperintensities (WMH) are neuroradiological features in T2-weighted and fluid attenuated inversion recovery  (T2-FLAIR) brain Magnetic Resonance Images (MRI) that have been associated with stroke and dementia progression [13]. A  previous study has shown that the volume of WMH on a patient may decrease (regress), stay the same, or increase (progress) over a period of time [2]. In this study, we refer to these changes as "evolution of WMH".
 
