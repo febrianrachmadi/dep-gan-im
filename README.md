@@ -43,7 +43,7 @@ If you find this code is useful, please cite the publication below.
 ## Authors
  - [Febrian Rachmadi](https://febrianrachmadi.github.io/) - Main author of the DEP-GAN (idea and codes)
  - [Prof. Taku Komura](http://homepages.inf.ed.ac.uk/tkomura/) - Supervisor in machine learning, artificial intelligent, and computer vision field (School of Informatics, University of Edinburgh)
- - [Dr. Maria Valdés Hernández](https://www.research.ed.ac.uk/portal/en/persons/maria-valdes-hernandez(f22f22d9-52bb-4883-bf94-52aa23a691e1).html), Dr. Stephen Makin, [Prof. Joanna M. Wardlaw](https://www.research.ed.ac.uk/portal/en/persons/joanna-wardlaw(8f7981c3-eb73-45f1-a191-d547f08e74f0).html) - Supervisors in medical and clinical fields (Medical School, University of Edinburgh)
+ - [Dr. Maria Valdés Hernández](https://www.research.ed.ac.uk/portal/en/persons/maria-valdes-hernandez(f22f22d9-52bb-4883-bf94-52aa23a691e1).html), Dr. Stephen Makin, [Prof. Joanna M. Wardlaw](https://www.research.ed.ac.uk/portal/en/persons/joanna-wardlaw(8f7981c3-eb73-45f1-a191-d547f08e74f0).html) - Supervisors in neuroimaging, medical and clinical fields (Medical School, University of Edinburgh)
  
 ## About DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1007/978-3-030-32248-9_17))
 
