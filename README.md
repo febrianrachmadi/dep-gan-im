@@ -1,27 +1,42 @@
 # Disease Evolution Predictor GAN (DEP-GAN) and U-ResNet (DEP-UResNet)
 This is provisional code of DEP-GAN and DEP-UResNet. All codes will be updated regularly. It is expected to publish the final version of the code before March 2020.
 
-Quick explanation of DEP-GAN can be found in "About DEP-GAN" section. Whereas, full explanation of DEP-GAN can be read in:
+Quick explanation of DEP-GAN can be found in ["About DEP-GAN" section](https://github.com/febrianrachmadi/dep-gan-im#about-dep-gan-excerpt-from-our-miccai-2019-paper). Whereas, full explanation of DEP-GAN can be read in:
  - our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692), or
  - manuscript titled **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks** [[pre-print]](https://doi.org/10.1101/738641).
+ 
+We would recommend the second manuscript as it contains full information about both DEP-GAN and DEP-UResNet.
 
 This code/publication is part of [our research projects](https://febrianrachmadi.github.io/projects/):
  - Disease Evolution Predictor Deep Neural Networks
  - Characterisation of WMH in Brain MRI using Irregularity Map
 
 ## News/Update
+ - 08/01/2020: Added the final code of DEP-UResNet and its example of trained weights.
  - 07/01/2020: Added the final code of DEP-GAN and its example of trained weights.
  - 13/06/2019: Example of setting files are now online!
  - 12/06/2019: Provisional codes of DEP-GAN are now online!
  
 ## Version
+ - v0.1.0: Training codes and trained weighst are now available.
  - v0.0.2: Setting files for training are now available.
  - v0.0.1: This is the provisional codes of DEP-GAN using irregularity map (IM).
+
+## About the Code
+
+There are two training codes available, which are:
+ - [Disease Evolution Predictor GAN (DEP-GAN)](https://github.com/febrianrachmadi/dep-gan-im/blob/master/DEP-GAN_PROB_IM_twoCritics_training_4fold.py), which is a non-supervised method for predicting the evolution (i.e., progression and regression) of WMH.
+ - [Disease Evolution Predictor U-ResNet (DEP-UResNet)](https://github.com/febrianrachmadi/dep-gan-im/blob/master/DEP-UResNet-wNoises-training-4fold.py), which is a supervised method for predicting the evolution (i.e., progression and regression) of WMH.
  
+One can find both network architectures inside the codes. The trained weights of both networks can be found in [models directory](https://github.com/febrianrachmadi/dep-gan-im/tree/master/models). Three different sets of trained weighst can be found:
+ - DEP-GAN using irregularity map (IM) [_unsupervised model_]: netG_depgan_twoCritics_im_noSL_30052019_fold*.h5
+ - DEP-GAN using probability map (PM) [_indirectly supervised model_]: netG_depgan_twoCritics_prob_noSL_21102019_fold*.h5
+ - DEP-UResNet [_supervised model_]: trained_depuresnet_pNoises_T02_19042019_fold*.h5
+
 ## Citation
 If you find this code is useful, please cite the publication below.
  - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map**. In: Shen D. et al. (eds) _Medical Image Computing and Computer Assisted Intervention – MICCAI 2019_. MICCAI 2019. Lecture Notes in Computer Science, vol 11766. Springer, Cham. [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692)
- - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks**. bioRxiv, 738641. pre-print doi: doi.org/10.1101/738641
+ - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks**. bioRxiv, 738641. [[pre-print]](https://doi.org/10.1101/738641)
 
 ## Authors
  - [Febrian Rachmadi](https://febrianrachmadi.github.io/) - Main author of the DEP-GAN (idea and codes)
