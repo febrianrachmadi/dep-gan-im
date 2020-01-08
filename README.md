@@ -1,9 +1,9 @@
 # Disease Evolution Predictor GAN (DEP-GAN) and U-ResNet (DEP-UResNet)
-This is provisional code of DEP-GAN and DEP-UResNet. All codes will be updated regularly. It is expected to publish the final version of the code before March 2020.
+This is codes for both DEP-GAN (non-supervised model) and DEP-UResNet (supervised model) to predict the evolution (i.e., progression and regression) of white matter hyperintensities (WMH). All codes will be updated regularly. It is expected to publish the final version of the code before March 2020.
 
-Quick explanation of DEP-GAN can be found in ["About DEP-GAN" section](https://github.com/febrianrachmadi/dep-gan-im#about-dep-gan-excerpt-from-our-miccai-2019-paper). Whereas, full explanation of DEP-GAN can be read in:
- - our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692), or
- - manuscript titled **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks** [[pre-print]](https://doi.org/10.1101/738641).
+Quick explanation of DEP-GAN can be found in ["About DEP-GAN" section](https://github.com/febrianrachmadi/dep-gan-im#about-dep-gan-excerpt-from-our-miccai-2019-paper). Whereas, full explanation of DEP-GAN can be read and found in:
+ - manuscript titled **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks** [[pre-print]](https://doi.org/10.1101/738641), or
+ - our MICCAI 2019 paper titled **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map** [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692).
  
 We would recommend the second manuscript as it contains full information about both DEP-GAN and DEP-UResNet.
 
@@ -12,12 +12,14 @@ This code/publication is part of [our research projects](https://febrianrachmadi
  - Characterisation of WMH in Brain MRI using Irregularity Map
 
 ## News/Update
+ - 09/01/2020: Added the final code for testing DEP-GAN and DEP-UResNet.
  - 08/01/2020: Added the final code of DEP-UResNet and its example of trained weights.
  - 07/01/2020: Added the final code of DEP-GAN and its example of trained weights.
  - 13/06/2019: Example of setting files are now online!
  - 12/06/2019: Provisional codes of DEP-GAN are now online!
  
 ## Version
+ - v0.2.0: Testing codes are now available.
  - v0.1.0: Training codes and trained weighst are now available.
  - v0.0.2: Setting files for training are now available.
  - v0.0.1: This is the provisional codes of DEP-GAN using irregularity map (IM).
@@ -35,13 +37,13 @@ One can find both network architectures inside the codes. The trained weights of
 
 ## Citation
 If you find this code is useful, please cite the publication below.
- - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map**. In: Shen D. et al. (eds) _Medical Image Computing and Computer Assisted Intervention – MICCAI 2019_. MICCAI 2019. Lecture Notes in Computer Science, vol 11766. Springer, Cham. [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692)
  - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Automatic Spatial Estimation of White Matter Hyperintensities Evolution in Brain MRI using Disease Evolution Predictor Deep Neural Networks**. bioRxiv, 738641. [[pre-print]](https://doi.org/10.1101/738641)
+ - Rachmadi, M. F., Valdés-Hernández, M. D. C., Makin, S., Wardlaw, J. M., & Komura, T. (2019). **Predicting the Evolution of White Matter Hyperintensities in Brain MRI using Generative Adversarial Networks and Irregularity Map**. In: Shen D. et al. (eds) _Medical Image Computing and Computer Assisted Intervention – MICCAI 2019_. MICCAI 2019. Lecture Notes in Computer Science, vol 11766. Springer, Cham. [[full-paper]](https://doi.org/10.1007/978-3-030-32248-9_17) [[pre-print]](https://doi.org/10.1101/662692)
 
 ## Authors
  - [Febrian Rachmadi](https://febrianrachmadi.github.io/) - Main author of the DEP-GAN (idea and codes)
- - [Taku Komura](http://homepages.inf.ed.ac.uk/tkomura/) - Supervisor in machine learning field (School of Informatics, University of Edinburgh)
- - Maria Valdés Hernández, Stephen Makin, Prof. Joanna M. Wardlaw - Supervisors in medical and clinical fields (Medical School, University of Edinburgh)
+ - [Prof. Taku Komura](http://homepages.inf.ed.ac.uk/tkomura/) - Supervisor in machine learning, artificial intelligent, and computer vision field (School of Informatics, University of Edinburgh)
+ - [Dr. Maria Valdés Hernández](https://www.research.ed.ac.uk/portal/en/persons/maria-valdes-hernandez(f22f22d9-52bb-4883-bf94-52aa23a691e1).html), Dr. Stephen Makin, [Prof. Joanna M. Wardlaw](https://www.research.ed.ac.uk/portal/en/persons/joanna-wardlaw(8f7981c3-eb73-45f1-a191-d547f08e74f0).html) - Supervisors in medical and clinical fields (Medical School, University of Edinburgh)
  
 ## About DEP-GAN (Excerpt from [our MICCAI 2019 paper](https://doi.org/10.1007/978-3-030-32248-9_17))
 
@@ -69,6 +71,8 @@ Figure 4: Architecture of generator (top) and critics (bottom) of DEP-GAN. Note 
 
 ![alt text](images/realDEMvsfakeDEM.png "Comparison between real DEM and fake DEM generated from different networks of GANs")
 Figure 5: Comparison between real DEM and fake DEM generated from different networks of GANs.
+
+Please read both of our papers [MICCAI 2019](https://doi.org/10.1007/978-3-030-32248-9_17) and [manuscript](https://doi.org/10.1101/738641) for full explanation of our proposed methods.
 
 ## Acknowledgement
 Funds from the Indonesia Endowment Fund for Education (LPDP), Ministry of Finance, Republic of Indonesia (Febrian Rachmadi); Row Fogo Charitable Trust (Grant No. BRO-D.FID3668413) (Maria Valdés-Hernández); Wellcome Trust (patient recruitment, scanning, primary study Ref No. WT088134/Z/09/A); Fondation Leducq (Perivascular Spaces Transatlantic Network of Excellence); EU Horizon 2020 (SVDs@Target); and the MRC UK Dementia Research Institute at the University of Edinburgh (Wardlaw programme) are gratefully acknowledged.
