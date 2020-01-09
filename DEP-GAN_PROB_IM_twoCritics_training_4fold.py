@@ -18,10 +18,36 @@ save_file_name = 'depgan_twoCritics_prob_noSL_21102019'
 ## Specify the location of .txt files for accessing the training data
 config_dir = 'train_data_server_fold'
 
+# Specify of input channel for generator
+nicg = 1 # Input 2 if you would like to use FLAIR as wellw
+
+# Specify to use probability map (PM) or irregularity map (IM)
+PM = True # False: Use IM
+if PM:
+    IM_TRSH = 0.5
+else:
+    IM_TRSH = 0.178
 # Threshold which defines what is WMH in both probability map (PM)
 # and ireegularity map (IM). PM should use 0.500 while IM should
 # use 0.178.
-IM_TRSH = 0.500
+
+# Network's parameters
+first_fm_G = 32 # feature maps' size of the first layer 
+Diters = 5 # critic's learning steps in 1 step generator learning
+delta = 10 # WGAN-GP's delta learning parameters
+niter = 200 # Number of Generator's learning iterations
+
+imageSize = 256
+noiseSize = 32
+batchSize = 16
+
+lrD = 1e-4
+lrG = 1e-4
+
+gen_iterations = 0
+crit_iterations = 0
+crit_dem_iterations = 0
+errG = 0
 
 ''' SECTION 2: Call libraries
 ##
@@ -483,24 +509,6 @@ for fold in [1,2,3,4]:
     logger = Logger('./logdir/'+save_file_name+'_fold'+str(fold))
     logger.log_graph(sess)
 
-    # Network parameters
-    first_fm_G = 32 # feature maps' size of the first layer 
-    Diters = 5 # critic's learning steps in 1 step generator learning
-    delta = 10 # WGAN-GP's delta learning parameters
-    niter = 200 # Number of Generator's learning iterations
-
-    imageSize = 256
-    noiseSize = 32
-    batchSize = 16
-
-    lrD = 1e-4
-    lrG = 1e-4
-
-    gen_iterations = 0
-    crit_iterations = 0
-    crit_dem_iterations = 0
-    errG = 0
-
     # In[8]:
     netD_y2 = Dis_C2D_FCN1((imageSize, imageSize, 1))
     netD_y2.summary()
@@ -509,13 +517,13 @@ for fold in [1,2,3,4]:
     netD_dem.summary()
 
     # In[9]:
-    netG = Gen_UNet2D((imageSize, imageSize, 2), (noiseSize, 1), first_fm_G, 1)
+    netG = Gen_UNet2D((imageSize, imageSize, nicg), (noiseSize, 1), first_fm_G, 1)
     netG.summary()
 
     # compute Wasserstein loss and  gradient penalty
     noiseZ = Input(shape=(noiseSize, 1))
     netD_real_input = Input(shape=(imageSize, imageSize, 1))
-    netG_real_input = Input(shape=(imageSize, imageSize, 2))
+    netG_real_input = Input(shape=(imageSize, imageSize, nicg))
 
     net_G_real_IM = Lambda(lambda x : x[:,:,:,0])(netG_real_input)
     net_G_real_IM = Reshape((imageSize, imageSize, 1))(net_G_real_IM)
@@ -706,11 +714,14 @@ for fold in [1,2,3,4]:
 
             brain_prob_1tp[brain_prob_1tp < 0] = 0
             brain_prob_2tp[brain_prob_2tp < 0] = 0
-            
-            # Concatenate probability map with flair of the 1st time point
-            brain_prob_1tp = np.concatenate((brain_prob_1tp, brain_flair_1tp), axis=-1)
-            print brain_prob_1tp.shape
-            print brain_prob_2tp.shape
+
+            if nicg == 1:
+                brain_prob_1tp = brain_prob_1tp
+            elif nicg == 2:
+                # Concatenate probability map with flair of the 1st time point
+                brain_prob_1tp = np.concatenate((brain_prob_1tp, brain_flair_1tp), axis=-1)
+            print("brain_prob_1tp -> ", brain_prob_1tp.shape)
+            print("brain_prob_2tp -> ", brain_prob_2tp.shape)
             
             print("ALL LOADED")
             if id == 0:

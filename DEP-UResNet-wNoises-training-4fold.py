@@ -20,6 +20,12 @@ save_file_name = 'depuresnet_pNoises_T02_19042019_fold'
 ## Specify the location of .txt files for accessing the training data
 config_dir = 'train_data_server_fold'
 
+# Training parameters
+nb_samples    = 16
+num_epochs    = 200
+bn_momentum   = 0.99
+shuffle_epoch = True
+
 ''' SECTION 2: Call libraries
 ##
 # '''
@@ -581,11 +587,6 @@ for fold in [1,2,3,4]:
     my_network.summary()
     my_network.get_config()
     keras.backend.get_session().run(tf.global_variables_initializer())
-
-    nb_samples    = 16
-    num_epochs    = 200
-    bn_momentum   = 0.99
-    shuffle_epoch = True
 
     # Create a fixed noise array for validation
     fixed_noise = np.random.normal(size=(flair_1tp_val.shape[0], noiseSize, 1)).astype('float32')

@@ -9,14 +9,32 @@ os.environ['KERAS_BACKEND']='tensorflow' # tensorflow
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 ## Specify where the trained model
-saved_model_name = 'netG_depgan_twoCritics_prob_noSL_21102019_fold'
+saved_model_name = 'netG_depgan_prob_noSL_fold'
 
 ## Specify where the output file
 dirOutputPath = '/mnt/HDD/febrian/Results_GAN/'
-saving_filename_dir = 'DEP-GANs-PROB-FLAIR-MEAN-RUN10-21102019'
+saving_filename_dir = 'DEP-GANs-PROB-RUN10-21102019'
 
 ## Specify the location of .txt files for accessing the training data
 config_dir = 'test_data_fold'
+
+# Specify of input channel for generator
+nicg = 1 # Input 2 if you would like to use FLAIR as wellw
+
+# Specify to use probability map (PM) or irregularity map (IM)
+PM = True # False: Use IM
+if PM:
+    TRSH_VAL = 0.5
+else:
+    TRSH_VAL = 0.178
+
+# Network's parameters
+first_fm_G = 32  # feature maps' size of the first layer 
+imageSize = 256
+noiseSize = 32
+
+lrD = 1e-4
+lrG = 1e-4
 
 ''' SECTION 2: Call libraries
 ##
@@ -359,17 +377,7 @@ print(dirOutput)
 vol_dsc_best_all = []
 for fold in [1,2,3,4]:
 
-    # Parameters
-    first_fm_G = 32  # feature maps' size of the first layer 
-    imageSize = 256
-    noiseSize = 32
-
-    lrD = 1e-4
-    lrG = 1e-4
-
-    TRSH_VAL = 0.5
-
-    netG = Gen_UNet2D((imageSize, imageSize, 2), (noiseSize, 1), first_fm_G, 1)
+    netG = Gen_UNet2D((imageSize, imageSize, nicg), (noiseSize, 1), first_fm_G, 1)
     netG.summary()
 
     netG.load_weights('./models/' + saved_model_name + str(fold) + '.h5')
@@ -591,9 +599,17 @@ for fold in [1,2,3,4]:
             print("brain_prob__1tp -> ", brain_prob__1tp.shape)
             print("brain_flair_1tp -> ", brain_flair_1tp.shape)
             print("wmh_mask -> ", wmh_mask.shape)
-            
-            brain_prob__1tp = np.concatenate((brain_prob__1tp, brain_flair_1tp), axis=-1)   # uncomment to use PM as input
-            # brain_prob__1tp = np.concatenate((brain_im____1tp, brain_flair_1tp), axis=-1)   # uncomment to use IM as input
+
+            if nicg == 1:
+                if PM:
+                    brain_prob__1tp = brain_prob__1tp
+                else:
+                    brain_prob__1tp = brain_im____1tp
+            elif nicg == 2:
+                if PM:
+                    brain_prob__1tp = np.concatenate((brain_prob__1tp, brain_flair_1tp), axis=-1)
+                else:
+                    brain_prob__1tp = np.concatenate((brain_im____1tp, brain_flair_1tp), axis=-1)
             print("brain_prob__1tp -> ", brain_prob__1tp.shape)
 
             # Produce 10 results by using 10 different sets of noise

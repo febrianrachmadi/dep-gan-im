@@ -15,6 +15,12 @@ config_dir = 'test_data_fold'
 ## Specify where the trained model
 saved_model_name = "trained_depuresnet_pNoises_T02_19042019_fold"
 
+# Network's parameters
+n_labels = 4
+noiseSize = 32
+first_fm_G = 32 # feature maps' size of the first layer
+imageSize = 256
+
 # ---- CREATE RESULT DIRs
 dirOutputPath = '/mnt/HDD/febrian/Results_GAN/'
 saving_filename_dir = 'T02.DEPURESNET-pNoises-RUN10-08102019'
@@ -389,12 +395,6 @@ def Gen_UNet2D(input_shape, noiseZ_shape=(32, 1), first_fm=32, nc_out=1):
 
 vol_dsc_all = []
 for fold in [1,2,3,4]:
-
-    # Parameters
-    n_labels = 4
-    noiseSize = 32
-    first_fm_G = 32 # feature maps' size of the first layer
-    imageSize = 256
 
     my_network = Gen_UNet2D((imageSize, imageSize, 1), (noiseSize, 1), first_fm_G, n_labels)
     my_network.summary()
