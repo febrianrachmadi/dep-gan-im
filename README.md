@@ -12,6 +12,7 @@ This code/publication is part of [our research projects](https://febrianrachmadi
  - Characterisation of WMH in Brain MRI using Irregularity Map
 
 ## News/Update
+ - 10/01/2020: Added the full 4-fold [training](https://github.com/febrianrachmadi/dep-gan-im/tree/master/train_data_server_fold) and [testing](https://github.com/febrianrachmadi/dep-gan-im/tree/master/test_data_server_fold) config files.
  - 09/01/2020: Added the final code for testing DEP-GAN and DEP-UResNet.
  - 08/01/2020: Added the final code of DEP-UResNet and its example of trained weights.
  - 07/01/2020: Added the final code of DEP-GAN and its example of trained weights.
@@ -19,6 +20,7 @@ This code/publication is part of [our research projects](https://febrianrachmadi
  - 12/06/2019: Provisional codes of DEP-GAN are now online!
  
 ## Version
+ - v0.3.0: [Training](https://github.com/febrianrachmadi/dep-gan-im/tree/master/train_data_server_fold) and [testing](https://github.com/febrianrachmadi/dep-gan-im/tree/master/test_data_server_fold) config files are now available.
  - v0.2.0: Testing codes are now available.
  - v0.1.0: Training codes and trained weighst are now available.
  - v0.0.2: Setting files for training are now available.
